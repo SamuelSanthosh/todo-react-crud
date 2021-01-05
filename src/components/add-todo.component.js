@@ -12,7 +12,9 @@ export default class AddTodo extends Component {
     this.state = {
       id: null,
       category: "",
-      description: "", 
+      description: "",
+      categoryError: "",
+      descriptionError: "", 
       published: false,
 
       submitted: false
@@ -37,8 +39,33 @@ export default class AddTodo extends Component {
       description: this.state.description
     };
 
+    validate = () => {
+      let categoryError = "";
+      let descriptionError = "";
+
+      if(!this.state.category){
+        categoryError = "category cannot be blank";
+      }
+
+      if(!this.state.description){
+        descriptionError = "description cannot be blank";
+      }
+
+      if(categoryError || descriptionError){
+        this.setState({categoryError, descriptionError});
+        return false;
+      }
+
+      return true;
+
+    };
+
     TodoDataService.create(data)
       .then(response => {
+        const isValid = this.validate();
+        if(isValid){
+          console.log(response.data);
+        }
         this.setState({
           id: response.data.id,
           category: response.data.category,
@@ -47,7 +74,6 @@ export default class AddTodo extends Component {
 
           submitted: true
         });
-        console.log(response.data);
       })
       .catch(e => {
         console.log(e);
@@ -59,6 +85,8 @@ export default class AddTodo extends Component {
       id: null,
       category: "",
       description: "",
+      categoryError: "",
+      descriptionError: "",
       published: false,
 
       submitted: false
@@ -88,6 +116,9 @@ export default class AddTodo extends Component {
                   onChange={this.onChangeCategory}
                   name="category"
                 />
+                <div style={{fontSize: 12, color: "red"}}>
+                  {this.state.categoryError}
+                </div>
               </div>
   
               <div className="form-group">
@@ -101,6 +132,9 @@ export default class AddTodo extends Component {
                   onChange={this.onChangeDescription}
                   name="description"
                 />
+                <div style={{fontSize: 12, color: "red"}}>
+                  {this.state.descriptionError}
+                </div>
               </div>
   
               <button onClick={this.saveTodo} className="btn btn-success">
