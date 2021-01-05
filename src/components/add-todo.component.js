@@ -8,6 +8,7 @@ export default class AddTodo extends Component {
     this.onChangeDescription = this.onChangeDescription.bind(this);
     this.saveTodo = this.saveTodo.bind(this);
     this.newTodo = this.newTodo.bind(this);
+    this.validate = this.validate.bind(this);
 
     this.state = {
       id: null,
@@ -33,39 +34,39 @@ export default class AddTodo extends Component {
     });
   }
 
+  validate(){
+    let categoryError = "";
+    let descriptionError = "";
+
+    if(!this.state.category){
+      categoryError = "category cannot be blank";
+    }
+
+    if(!this.state.description){
+      descriptionError = "description cannot be blank";
+    }
+
+    if(categoryError || descriptionError){
+      this.setState({categoryError, descriptionError});
+      return false;
+    }
+
+    return true;
+
+  };
+
   saveTodo() {
+    const isValid = this.validate();
+        if(isValid){
+          console.log("todo success");
+        }
     var data = {
       category: this.state.category,
       description: this.state.description
     };
 
-    validate = () => {
-      let categoryError = "";
-      let descriptionError = "";
-
-      if(!this.state.category){
-        categoryError = "category cannot be blank";
-      }
-
-      if(!this.state.description){
-        descriptionError = "description cannot be blank";
-      }
-
-      if(categoryError || descriptionError){
-        this.setState({categoryError, descriptionError});
-        return false;
-      }
-
-      return true;
-
-    };
-
     TodoDataService.create(data)
       .then(response => {
-        const isValid = this.validate();
-        if(isValid){
-          console.log(response.data);
-        }
         this.setState({
           id: response.data.id,
           category: response.data.category,
@@ -116,9 +117,9 @@ export default class AddTodo extends Component {
                   onChange={this.onChangeCategory}
                   name="category"
                 />
-                <div style={{fontSize: 12, color: "red"}}>
+                {this.state.categoryError ? <div style={{fontSize: 14, color: "red"}}>
                   {this.state.categoryError}
-                </div>
+                </div> : null }
               </div>
   
               <div className="form-group">
@@ -132,9 +133,9 @@ export default class AddTodo extends Component {
                   onChange={this.onChangeDescription}
                   name="description"
                 />
-                <div style={{fontSize: 12, color: "red"}}>
+                 {this.state.descriptionError ? <div style={{fontSize: 14, color: "red"}}>
                   {this.state.descriptionError}
-                </div>
+                </div> : null }
               </div>
   
               <button onClick={this.saveTodo} className="btn btn-success">
