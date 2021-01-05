@@ -12,7 +12,7 @@ class App extends Component {
     return (
       <div>
         <nav className="navbar navbar-expand navbar-dark bg-dark">
-          <a href="#" className="navbar-brand">
+          <a href="https://todo-react-crud-app.netlify.app/todos" className="navbar-brand">
             To-do Application
           </a>
           <div className="navbar-nav mr-auto">
